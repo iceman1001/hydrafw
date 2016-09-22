@@ -263,7 +263,7 @@ int write_file(uint8_t* buffer, uint32_t size)
 
 	/* Save data in file */
 	for(i=0; i<999; i++) {
-		sprintf(filename, "0:hydrabus_%u.txt", i);
+		sprintf(filename, "0:hydrabus_%ld.txt", i);
 		err = f_open(&FileObject, filename, FA_WRITE | FA_CREATE_NEW);
 		if(err == FR_OK) {
 			break;
@@ -501,7 +501,8 @@ int cmd_sd_pwd(t_hydra_console *con, t_tokenline_parsed *p)
 int cmd_sd_ls(t_hydra_console *con, t_tokenline_parsed *p)
 {
 	FRESULT err;
-	uint32_t clusters;
+//	uint32_t clusters;
+	DWORD clusters;
 	FATFS *fsp;
 	uint64_t free_size_bytes;
 	uint32_t free_size_kb;
@@ -795,7 +796,7 @@ int cmd_sd_erase(t_hydra_console *con, t_tokenline_parsed *p)
 		 * Now perform some FS tests.
 		 */
 		FRESULT err;
-		uint32_t clusters;
+		DWORD clusters;
 		FATFS *fsp;
 		FIL FileObject;
 		uint32_t bytes_written;

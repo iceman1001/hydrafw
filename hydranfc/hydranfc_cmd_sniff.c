@@ -33,6 +33,7 @@
 #include "common.h"
 #include "microsd.h"
 #include "ff.h"
+#include "utils.h"	/* bytes_to_num */
 
 filename_t write_filename;
 
@@ -244,7 +245,7 @@ __attribute__ ((always_inline)) static inline uint32_t WaitGetDMABuffer(void)
 		}
 		if (new_buf_no != buf_no) {
 			buf_no = new_buf_no;
-			val_u32 = *((uint32_t*)(&spi_rx_dma_buf[buf_no][0]));
+			val_u32 = bytes_to_num(&spi_rx_dma_buf[buf_no][0], 4);
 			return( SWAP32(val_u32) ); /* Swap 32bits Data for Little Endian */
 		}
 
@@ -279,7 +280,7 @@ int sniff_write_file(uint8_t* buffer, uint32_t size)
 
 	/* Save data in file */
 	for(i=0; i<999; i++) {
-		sprintf(write_filename.filename, "0:nfc_sniff_%u.txt", i);
+		sprintf(write_filename.filename, "0:nfc_sniff_%ld.txt", i);
 		err = f_open(&FileObject, write_filename.filename, FA_WRITE | FA_CREATE_NEW);
 		if (err == FR_OK) {
 			break;
