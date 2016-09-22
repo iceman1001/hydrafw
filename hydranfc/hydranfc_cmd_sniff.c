@@ -279,7 +279,7 @@ int sniff_write_file(uint8_t* buffer, uint32_t size)
 
 	/* Save data in file */
 	for(i=0; i<999; i++) {
-		sprintf(write_filename.filename, "0:nfc_sniff_%ld.txt", i);
+		sprintf(write_filename.filename, "0:nfc_sniff_%u.txt", i);
 		err = f_open(&FileObject, write_filename.filename, FA_WRITE | FA_CREATE_NEW);
 		if (err == FR_OK) {
 			break;

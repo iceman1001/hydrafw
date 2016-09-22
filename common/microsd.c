@@ -263,7 +263,7 @@ int write_file(uint8_t* buffer, uint32_t size)
 
 	/* Save data in file */
 	for(i=0; i<999; i++) {
-		sprintf(filename, "0:hydrabus_%ld.txt", i);
+		sprintf(filename, "0:hydrabus_%u.txt", i);
 		err = f_open(&FileObject, filename, FA_WRITE | FA_CREATE_NEW);
 		if(err == FR_OK) {
 			break;
