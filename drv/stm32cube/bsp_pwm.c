@@ -130,6 +130,7 @@ bsp_status_t bsp_pwm_init(bsp_dev_pwm_t dev_num)
 
 	/* Init TIM */
 	htim.Instance = TIM2;
+	htim.State = HAL_TIM_STATE_RESET;
 	htim.Init.Period = 0;
 	htim.Init.Prescaler = 0;
 	htim.Init.ClockDivision = 0;
@@ -206,13 +207,14 @@ bsp_status_t bsp_pwm_update(bsp_dev_pwm_t dev_num, uint32_t frequency, uint32_t 
 
 	channel = get_pwm_chan_num(dev_num);
 
+	/* Configure TIMx PWM on Timer2 */
+	htim.Instance = TIM2;
+
 	/* Stop PWM */
 	if(HAL_TIM_PWM_Stop(&htim, channel) != HAL_OK) {
 		return BSP_ERROR;
 	}
 
-	/* Configure TIMx PWM on Timer2 */
-	htim.Instance = TIM2;
 	/* Configure PWM Frequency */
 	arr = ((apb1_freq * 2) / frequency) - 1;
 	htim.Instance->ARR = arr;
