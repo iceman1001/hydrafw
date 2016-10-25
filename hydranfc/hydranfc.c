@@ -314,7 +314,7 @@ THD_FUNCTION(key_sniff, arg)
 			}
 
 			D2_ON;
-			hydranfc_sniff_14443A(NULL);
+			hydranfc_sniff_14443A(NULL, TRUE, FALSE, FALSE);
 			D2_OFF;
 		}
 
@@ -856,10 +856,16 @@ static int exec(t_hydra_console *con, t_tokenline_parsed *p, int token_pos)
 {
 	int dev_func;
 	mode_config_proto_t* proto = &con->mode->proto;
-	int action, period, continuous, t;
+	int action, period, t;
+	bool continuous;
 	unsigned int mifare_uid = 0;
 	filename_t sd_file;
 	int str_offset;
+	bool sniff_trace_uart1;
+	bool sniff_raw;
+	bool sniff_bin;
+	bool sniff_frame_time;
+	bool sniff_parity;
 
 	if(p->tokens[token_pos] == T_SD)
 	{
@@ -872,6 +878,11 @@ static int exec(t_hydra_console *con, t_tokenline_parsed *p, int token_pos)
 	trf7970a_irq_fn = NULL;
 	extStart(&EXTD1, &extcfg);
 
+	sniff_trace_uart1 = FALSE;
+	sniff_raw = FALSE;
+	sniff_bin = FALSE;
+	sniff_frame_time = FALSE;
+	sniff_parity = FALSE;
 	action = 0;
 	period = 1000;
 	continuous = FALSE;
@@ -922,8 +933,27 @@ static int exec(t_hydra_console *con, t_tokenline_parsed *p, int token_pos)
 			action = p->tokens[t];
 			break;
 
+		case T_TRACE_UART1:
+			sniff_trace_uart1 = TRUE;
+			break;
+
+		case T_FRAME_TIME:
+			sniff_frame_time = TRUE;
+			break;
+
+		case T_BIN:
+			sniff_bin = TRUE;
+			break;
+
+		case T_PARITY:
+			sniff_parity = TRUE;
+			break;
+
+		case T_RAW:
+			sniff_raw = TRUE;
+			break;
+
 		case T_SNIFF:
-		case T_SNIFF_DBG:
 			action = p->tokens[t];
 			break;
 
@@ -980,11 +1010,37 @@ static int exec(t_hydra_console *con, t_tokenline_parsed *p, int token_pos)
 		break;
 
 	case T_SNIFF:
-		hydranfc_sniff_14443A(con);
-		break;
-
-	case T_SNIFF_DBG:
-		hydranfc_sniff_14443A_dbg(con);
+		if(sniff_bin)
+		{
+			if(sniff_raw)
+			{
+				/* Sniffer Binary RAW UART1 only */
+				hydranfc_sniff_14443AB_bin_raw(con, sniff_frame_time, sniff_frame_time);
+			}else
+			{
+				/* Sniffer Binary UART1 only */
+				hydranfc_sniff_14443A_bin(con, sniff_frame_time, sniff_frame_time, sniff_parity);
+			}
+		}else
+		{
+			if(sniff_raw)
+			{
+				/* Sniffer Binary RAW UART1 only */
+				hydranfc_sniff_14443AB_bin_raw(con, sniff_frame_time, sniff_frame_time);
+			}else
+			{
+				/* Sniffer ASCII */
+				if(sniff_trace_uart1)
+				{
+					if(sniff_frame_time)
+						cprintf(con, "frame-time disabled for trace-uart1 in ASCII\r\n");
+					hydranfc_sniff_14443A(con, FALSE, FALSE, TRUE);
+				}else
+				{
+					hydranfc_sniff_14443A(con, sniff_frame_time, sniff_frame_time, FALSE);
+				}
+			}
+		}
 		break;
 
 	case T_EMUL_MIFARE:
