@@ -32,6 +32,7 @@
 #include "hydrabus_bbio_uart.h"
 #include "hydrabus_bbio_i2c.h"
 #include "hydrabus_bbio_rawwire.h"
+#include "hydrabus_bbio_onewire.h"
 
 int cmd_bbio(t_hydra_console *con)
 {
@@ -42,23 +43,18 @@ int cmd_bbio(t_hydra_console *con)
 		if(chnRead(con->sdu, &bbio_mode, 1) == 1) {
 			switch(bbio_mode) {
 			case BBIO_SPI:
-				cprint(con, "SPI1", 4);
 				bbio_mode_spi(con);
 				break;
 			case BBIO_I2C:
-				cprint(con, "I2C1", 4);
 				bbio_mode_i2c(con);
 				break;
 			case BBIO_UART:
-				cprint(con, "ART1", 4);
 				bbio_mode_uart(con);
 				break;
 			case BBIO_1WIRE:
-				cprint(con, "1W01", 4);
-				//TODO
+				bbio_mode_onewire(con);
 				break;
 			case BBIO_RAWWIRE:
-				cprint(con, "RAW1", 4);
 				bbio_mode_rawwire(con);
 				break;
 			case BBIO_JTAG:
@@ -66,19 +62,17 @@ int cmd_bbio(t_hydra_console *con)
 				openOCD(con);
 				break;
 			case BBIO_CAN:
-				cprint(con, "CAN1", 4);
 				bbio_mode_can(con);
 				break;
 			case BBIO_PIN:
-				cprint(con, "PIN1", 4);
 				bbio_mode_pin(con);
 				break;
 			case BBIO_RESET_HW:
 				return TRUE;
 			default:
+				cprint(con, "\x01", 1);
 				break;
 			}
-			cprint(con, "BBIO1", 5);
 		}
 	}
 	return TRUE;

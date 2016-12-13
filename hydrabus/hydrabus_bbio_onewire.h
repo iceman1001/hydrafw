@@ -1,8 +1,7 @@
 /*
  * HydraBus/HydraNFC
  *
- * Copyright (C) 2015-2016 Nicolas OBERLI
- * Copyright (C) 2016 Benjamin VERNOUX
+ * Copyright (C) 2016 Nicolas OBERLI
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +16,6 @@
  * limitations under the License.
  */
 
-#define BBIO_I2C_HEADER		"I2C1"
+#define BBIO_ONEWIRE_HEADER	"1W01"
 
-void bbio_i2c_init_proto_default(t_hydra_console *con);
-void bbio_i2c_sniff(t_hydra_console *con);
-void bbio_mode_i2c(t_hydra_console *con);
+void bbio_mode_onewire(t_hydra_console *con);
